@@ -3,17 +3,19 @@
 
 # analyze EXIF data for interesting list
 
-require(lubridate)
-require(Rflickr)
+library(lubridate)
+#if you have not installed Rflickr
+#install.packages("Rflickr", repos = "http://www.omegahat.org/R", type="source")
+library(Rflickr)
 data(FlickrFunctions)
 
 load("secrets.Rdata")
 
 tok = authenticate(api_key, secret)
-flickr.tags.getHotList(secret, tok, api_key)    
 
 s <- flickrSession(secret, tok, api_key)
 
+#use this to specify how many days to analyze
 daysAnalyze = 3
 
 df <- data.frame()
