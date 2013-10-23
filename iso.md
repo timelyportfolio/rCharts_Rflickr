@@ -194,7 +194,9 @@ dIso <- dPlot(
   x = "iso",
   groups = "date",
   data = df,
-  type = "bar"
+  type = "bar",
+  height = 400,
+  width =600
 )
 dIso$xAxis( orderRule = "iso" )
 dIso
@@ -210,7 +212,9 @@ dIso <- dPlot(
   x = c("iso","date"),
   groups = "date",
   data = df,
-  type = "bar"
+  type = "bar",
+  height = 400,
+  width =600
 )
 dIso$xAxis( orderRule = "iso" )
 dIso
@@ -226,7 +230,9 @@ dIso <- dPlot(
   x = c("date","iso"),
   groups = "date",
   data = df,
-  type = "bar"
+  type = "bar",
+  height = 400,
+  width =600
 )
 dIso$xAxis( grouporderRule = "iso" )
 dIso
@@ -242,7 +248,9 @@ dIso <- dPlot(
   x = "iso",
   groups = "date",
   data = df,
-  type = "line"
+  type = "line",
+  height = 400,
+  width =600
 )
 dIso$xAxis( orderRule = "iso" )
 dIso
@@ -258,7 +266,9 @@ dIso <- dPlot(
   x = c("date","iso"),
   groups = "date",
   data = df,
-  type = "area"
+  type = "area",
+  height = 400,
+  width =600
 )
 dIso$xAxis( grouporderRule = "iso" )
 dIso
@@ -266,3 +276,5 @@ dIso
 
 <iframe src=assets/fig/unnamed-chunk-10.html seamless></iframe>
 
+
+As you might already know, I love R, especially with [rCharts](http://rcharts.io) and [slidify](http://slidify.org).

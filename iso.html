@@ -209,7 +209,9 @@ dIso &lt;- dPlot(
   x = &quot;iso&quot;,
   groups = &quot;date&quot;,
   data = df,
-  type = &quot;bar&quot;
+  type = &quot;bar&quot;,
+  height = 400,
+  width =600
 )
 dIso$xAxis( orderRule = &quot;iso&quot; )
 dIso
@@ -222,7 +224,9 @@ dIso
   x = c(&quot;iso&quot;,&quot;date&quot;),
   groups = &quot;date&quot;,
   data = df,
-  type = &quot;bar&quot;
+  type = &quot;bar&quot;,
+  height = 400,
+  width =600
 )
 dIso$xAxis( orderRule = &quot;iso&quot; )
 dIso
@@ -235,7 +239,9 @@ dIso
   x = c(&quot;date&quot;,&quot;iso&quot;),
   groups = &quot;date&quot;,
   data = df,
-  type = &quot;bar&quot;
+  type = &quot;bar&quot;,
+  height = 400,
+  width =600
 )
 dIso$xAxis( grouporderRule = &quot;iso&quot; )
 dIso
@@ -248,7 +254,9 @@ dIso
   x = &quot;iso&quot;,
   groups = &quot;date&quot;,
   data = df,
-  type = &quot;line&quot;
+  type = &quot;line&quot;,
+  height = 400,
+  width =600
 )
 dIso$xAxis( orderRule = &quot;iso&quot; )
 dIso
@@ -261,13 +269,17 @@ dIso
   x = c(&quot;date&quot;,&quot;iso&quot;),
   groups = &quot;date&quot;,
   data = df,
-  type = &quot;area&quot;
+  type = &quot;area&quot;,
+  height = 400,
+  width =600
 )
 dIso$xAxis( grouporderRule = &quot;iso&quot; )
 dIso
 </code></pre>
 
 <iframe src=assets/fig/unnamed-chunk-10.html seamless></iframe>
+
+<p>As you might already know, I love R, especially with <a href="http://rcharts.io">rCharts</a> and <a href="http://slidify.org">slidify</a>.</p>
 
     </div>
         
