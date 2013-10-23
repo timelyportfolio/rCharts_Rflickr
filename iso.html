@@ -203,7 +203,11 @@ df$iso &lt;- as.character(levels(df$iso))[df$iso]
 
 <p>Now that we have a <code>data.frame</code> with ISO speeds, let&#39;s use <code>rCharts</code> to analyze it.  I will use <a href="http://dimplejs.org"><code>dimplejs</code></a>.</p>
 
-<pre><code class="r">require(rCharts)
+<pre><code class="r"># Thanks to http://tradeblotter.wordpress.com/
+# Qualitative color schemes by Paul Tol
+ tol4qualitative=c(&quot;#4477AA&quot;, &quot;#117733&quot;, &quot;#DDCC77&quot;, &quot;#CC6677&quot;)
+
+require(rCharts)
 dIso &lt;- dPlot(
   y = &quot;Freq&quot;,
   x = &quot;iso&quot;,
@@ -214,6 +218,11 @@ dIso &lt;- dPlot(
   width =600
 )
 dIso$xAxis( orderRule = &quot;iso&quot; )
+dIso$defaultColors(
+  #&quot;#! d3.scale.category10() !#&quot;, 
+  tol4qualitative,
+  replace = T
+)
 dIso
 </code></pre>
 
@@ -229,6 +238,11 @@ dIso
   width =600
 )
 dIso$xAxis( orderRule = &quot;iso&quot; )
+dIso$defaultColors(
+  #&quot;#! d3.scale.category10() !#&quot;, 
+  tol4qualitative,
+  replace = T
+)
 dIso
 </code></pre>
 
@@ -244,6 +258,11 @@ dIso
   width =600
 )
 dIso$xAxis( grouporderRule = &quot;iso&quot; )
+dIso$defaultColors(
+  #&quot;#! d3.scale.category10() !#&quot;, 
+  tol4qualitative,
+  replace = T
+)
 dIso
 </code></pre>
 
@@ -259,6 +278,11 @@ dIso
   width =600
 )
 dIso$xAxis( orderRule = &quot;iso&quot; )
+dIso$defaultColors(
+  #&quot;#! d3.scale.category10() !#&quot;, 
+  tol4qualitative,
+  replace = T
+)
 dIso
 </code></pre>
 
@@ -274,6 +298,11 @@ dIso
   width =600
 )
 dIso$xAxis( grouporderRule = &quot;iso&quot; )
+dIso$defaultColors(
+  #&quot;#! d3.scale.category10() !#&quot;, 
+  tol4qualitative,
+  replace = T
+)
 dIso
 </code></pre>
 

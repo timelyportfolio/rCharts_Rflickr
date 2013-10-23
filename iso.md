@@ -188,6 +188,10 @@ Now that we have a `data.frame` with ISO speeds, let's use `rCharts` to analyze 
 
 
 ```r
+# Thanks to http://tradeblotter.wordpress.com/
+# Qualitative color schemes by Paul Tol
+ tol4qualitative=c("#4477AA", "#117733", "#DDCC77", "#CC6677")
+
 require(rCharts)
 dIso <- dPlot(
   y = "Freq",
@@ -199,6 +203,11 @@ dIso <- dPlot(
   width =600
 )
 dIso$xAxis( orderRule = "iso" )
+dIso$defaultColors(
+  #"#! d3.scale.category10() !#", 
+  tol4qualitative,
+  replace = T
+)
 dIso
 ```
 
@@ -217,6 +226,11 @@ dIso <- dPlot(
   width =600
 )
 dIso$xAxis( orderRule = "iso" )
+dIso$defaultColors(
+  #"#! d3.scale.category10() !#", 
+  tol4qualitative,
+  replace = T
+)
 dIso
 ```
 
@@ -235,6 +249,11 @@ dIso <- dPlot(
   width =600
 )
 dIso$xAxis( grouporderRule = "iso" )
+dIso$defaultColors(
+  #"#! d3.scale.category10() !#", 
+  tol4qualitative,
+  replace = T
+)
 dIso
 ```
 
@@ -253,6 +272,11 @@ dIso <- dPlot(
   width =600
 )
 dIso$xAxis( orderRule = "iso" )
+dIso$defaultColors(
+  #"#! d3.scale.category10() !#", 
+  tol4qualitative,
+  replace = T
+)
 dIso
 ```
 
@@ -271,6 +295,11 @@ dIso <- dPlot(
   width =600
 )
 dIso$xAxis( grouporderRule = "iso" )
+dIso$defaultColors(
+  #"#! d3.scale.category10() !#", 
+  tol4qualitative,
+  replace = T
+)
 dIso
 ```
 

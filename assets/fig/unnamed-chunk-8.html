@@ -18,19 +18,19 @@
     
   </head>
   <body>
-    <div id='chart290c60675a4d' class='rChart dimple'></div>  
+    <div id='chart290c23356a4a' class='rChart dimple'></div>  
     
     <script type="text/javascript">
 (function(){
   var opts = {
- "dom": "chart290c60675a4d",
+ "dom": "chart290c23356a4a",
 "width":    600,
 "height":    400,
 "x": [ "date", "iso" ],
 "y": "Freq",
 "groups": "date",
 "type": "bar",
-"id": "chart290c60675a4d" 
+"id": "chart290c23356a4a" 
 },
     data = [{"date":"2013-10-22","iso":"50","Freq":2},{"date":"2013-10-22","iso":"80","Freq":1},{"date":"2013-10-22","iso":"100","Freq":22},{"date":"2013-10-22","iso":"125","Freq":1},{"date":"2013-10-22","iso":"160","Freq":1},{"date":"2013-10-22","iso":"200","Freq":12},{"date":"2013-10-22","iso":"220","Freq":1},{"date":"2013-10-22","iso":"400","Freq":10},{"date":"2013-10-22","iso":"640","Freq":6},{"date":"2013-10-22","iso":"800","Freq":4},{"date":"2013-10-22","iso":"1100","Freq":1},{"date":"2013-10-22","iso":"1250","Freq":1},{"date":"2013-10-22","iso":"1600","Freq":1},{"date":"2013-10-22","iso":"2500","Freq":2},{"date":"2013-10-22","iso":"3200","Freq":1},{"date":"2013-10-21","iso":"50","Freq":2},{"date":"2013-10-21","iso":"100","Freq":22},{"date":"2013-10-21","iso":"125","Freq":2},{"date":"2013-10-21","iso":"160","Freq":2},{"date":"2013-10-21","iso":"200","Freq":13},{"date":"2013-10-21","iso":"250","Freq":1},{"date":"2013-10-21","iso":"320","Freq":1},{"date":"2013-10-21","iso":"400","Freq":11},{"date":"2013-10-21","iso":"500","Freq":2},{"date":"2013-10-21","iso":"640","Freq":1},{"date":"2013-10-21","iso":"800","Freq":8},{"date":"2013-10-21","iso":"1250","Freq":2},{"date":"2013-10-21","iso":"1600","Freq":1},{"date":"2013-10-21","iso":"3200","Freq":1},{"date":"2013-10-20","iso":"50","Freq":3},{"date":"2013-10-20","iso":"80","Freq":3},{"date":"2013-10-20","iso":"100","Freq":21},{"date":"2013-10-20","iso":"110","Freq":1},{"date":"2013-10-20","iso":"125","Freq":3},{"date":"2013-10-20","iso":"160","Freq":1},{"date":"2013-10-20","iso":"200","Freq":11},{"date":"2013-10-20","iso":"250","Freq":1},{"date":"2013-10-20","iso":"320","Freq":4},{"date":"2013-10-20","iso":"400","Freq":10},{"date":"2013-10-20","iso":"500","Freq":1},{"date":"2013-10-20","iso":"640","Freq":2},{"date":"2013-10-20","iso":"800","Freq":3},{"date":"2013-10-20","iso":"1000","Freq":1},{"date":"2013-10-20","iso":"1600","Freq":1},{"date":"2013-10-20","iso":"4000","Freq":1},{"date":"2013-10-20","iso":"12800","Freq":1}],
     xAxis = {
@@ -44,7 +44,9 @@
 },
     zAxis = [],
     colorAxis = [],
-    defaultColors = [],
+    defaultColors = [
+ [ "#4477AA", "#117733", "#DDCC77", "#CC6677" ] 
+],
     legend = [];
   var svg = dimple.newSvg("#" + opts.id, opts.width, opts.height);
 
