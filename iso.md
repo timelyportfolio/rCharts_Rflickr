@@ -45,7 +45,7 @@ iframe {height: 420px; width: 620px}
   
 <a href="https://github.com/timelyportfolio/rCharts_Rflickr"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
 
-# Flickr Interesting ISOs with Rflickr & rCharts | slidify
+# Flickr Interesting ISOs with Rflickr & rCharts + slidify
 
 
 
@@ -164,11 +164,11 @@ for(i in 1:daysAnalyze) {
 }
 ```
 
-[1] "2013-10-17"
+[1] "2013-10-22"
 [1] 101
-[1] "2013-10-16"
-[1] 98
-[1] "2013-10-15"
+[1] "2013-10-21"
+[1] 101
+[1] "2013-10-20"
 [1] 101
 
 ```r
