@@ -47,20 +47,7 @@ iframe {height: 420px; width: 620px}
 
 # Flickr Interesting ISOs with Rflickr & rCharts + slidify
 
-```{r message = F, warning = F, error = F, echo = F, tidy = F, cache = F}
-require(knitr)
-opts_chunk$set(
-  message = F,
-  warning = F,
-  error = F,
-  results = 'asis',
-  tidy = F,
-  cache = F,
-  fig.width = 8,
-  fig.height = 5,
-  eval=F
-)
-```
+
 <div class = "well">
 <p>
 I have rewritten <a href = "http://timelyportfolio.blogspot.com/2013/10/iso-popularity-on-flickr-explore.html">this old post</a> to use Hadley Wickham's <a href = "http://github.com/hadley/httr"><code>httr</code> </a> instead of <code>Rflickr</code> for two reasons:
@@ -85,7 +72,8 @@ The information available from [the Flickr API](http://www.flickr.com/services/a
 ### ISO Speed Popularity
 I have always wondered what ISO speeds occur most frequently on Explore.  I never imagined that I could answer my question with R.  As usual, we will start by loading all the necessary packages.
 
-```{r}
+
+```r
 # analyze EXIF data for interesting list
 library(httr)
 library(pipeR)
@@ -95,7 +83,8 @@ library(jsonlite)
 If you do not have a free noncommercial API key, apply for one [here](http://www.flickr.com/services/api/keys/).  Trust me it is very easy, so don't let this be an excuse not to try it out.  I put mine in a little `secrets.Rdata` file that I will load with following code and then start a session.
 
 
-```{r}
+
+```r
 load("secrets.Rdata")
 
 flickr.app <- oauth_app("r to flickr",api_key,secret)
@@ -114,7 +103,8 @@ tok <- oauth1.0_token(
 
 Since this is more a proof of concept rather than an ambitious scientific study, I'll just look back three days.
 
-```{r}
+
+```r
 #use this to specify how many days to analyze
 daysAnalyze = 3
 ```
@@ -123,7 +113,8 @@ My code gets a little sloppy here but it does work.  Originally I was forced to 
 
 <h5>Get the Interesting</h5>
 
-```{r}
+
+```r
 #initialize a data frame to collect 
 interesting <- lapply(1:daysAnalyze, function(i){
     interesting <- GET(url=sprintf(
@@ -143,7 +134,8 @@ interesting <- lapply(1:daysAnalyze, function(i){
 
 <h5>Get EXIF for the Interesting</h5>
   
-```{r}
+
+```r
   #for each photo try to get the exif information
   #Flickr allows users to block EXIF
   #so use try to bypass error
@@ -235,7 +227,8 @@ df$iso <- as.character(levels(df$iso))[df$iso]
 Now that we have a `data.frame` with ISO speeds, let's use `rCharts` to analyze it.  I will use [`dimplejs`](http://dimplejs.org).
 
 
-```{r}
+
+```r
 # Thanks to http://tradeblotter.wordpress.com/
 # Qualitative color schemes by Paul Tol
  tol4qualitative=c("#4477AA", "#117733", "#DDCC77", "#CC6677")
@@ -259,7 +252,8 @@ dIso$defaultColors(
 dIso
 ```
 
-```{r}
+
+```r
 dIso <- dPlot(
   y = "Freq",
   x = c("iso","date"),
@@ -278,7 +272,8 @@ dIso$defaultColors(
 dIso
 ```
 
-```{r}
+
+```r
 dIso <- dPlot(
   y = "Freq",
   x = c("date","iso"),
@@ -297,7 +292,8 @@ dIso$defaultColors(
 dIso
 ```
 
-```{r}
+
+```r
 dIso <- dPlot(
   y = "Freq",
   x = "iso",
@@ -316,7 +312,8 @@ dIso$defaultColors(
 dIso
 ```
 
-```{r}
+
+```r
 dIso <- dPlot(
   y = "Freq",
   x = c("date","iso"),

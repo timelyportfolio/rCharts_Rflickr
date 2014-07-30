@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Flickr Interesting ISOs with Rflickr &amp; rCharts</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
+  <link rel="icon" type="image/png" href="favicon.ico">
+  <style>
+  body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+  }
+  </style>
+  
+<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.no-responsive.no-icons.min.css" rel="stylesheet">
+<!-- <link rel="stylesheet" href="/css/bootstrap.min.css"> -->
+<link  rel="stylesheet" 
+    href="http://netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome.css">
+  <link rel="stylesheet" href="libraries/frameworks/bootstrap/css/bootstrap-responsive.min.css">
+  
+  <link rel="stylesheet" href="libraries/frameworks/bootstrap/css/main.css">
+  <link rel="stylesheet" href="libraries/highlighters/prettify/css/twitter-bootstrap.css" />
+  <script src="libraries/frameworks/bootstrap/js/vendor/modernizr-2.6.1-respond-1.1.0.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/frameworks/bootstrap/js/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+    <link rel=stylesheet href="http://fonts.googleapis.com/css?family=Raleway:300"></link>
+<link rel=stylesheet href="http://fonts.googleapis.com/css?family=Oxygen"></link>
+
+  
+</head>
+<body>
+   <!--[if lt IE 7]>
+     <p class="chromeframe">You are using an outdated browser. 
+       <a href="http://browsehappy.com/">Upgrade your browser today</a> or 
+       <a href="http://www.google.com/chromeframe/?redirect=true"> 
+         install Google Chrome Frame
+       </a> to better experience this site.
+    </p>
+   <![endif]-->
+   <!-- Ref: http://twitter.github.com/bootstrap/examples/hero.html -->
+   
+    <div class="container">
+      
+<style>
+iframe{
+  height:450px;
+  width:900px;
+  margin:auto auto;
+}
+
+body{
+  font-family: 'Oxygen', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+h1,h2,h3,h4 {
+  font-family: 'Raleway', sans-serif;
+}
+
+.container { width: 900px; }
+
+h3 {
+  background-color: #D4DAEC;
+    text-indent: 100px; 
+}
+
+h4 {
+  text-indent: 100px;
+}
+
+iframe {height: 420px; width: 620px}
+</style>
+  
+
+<p><a href="https://github.com/timelyportfolio/rCharts_Rflickr"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a></p>
+
+<h1>Flickr Interesting ISOs with Rflickr &amp; rCharts + slidify</h1>
+
+<div class = "well">
+<p>
+I have rewritten <a href = "http://timelyportfolio.blogspot.com/2013/10/iso-popularity-on-flickr-explore.html">this old post</a> to use Hadley Wickham's <a href = "http://github.com/hadley/httr"><code>httr</code> </a> instead of <code>Rflickr</code> for two reasons:
+</p>
+
+<ol>
+  <li>
+    <code>Rflickr</code> is not working for me anymore
+  </li>
+  <li>
+    <code>httr</code> is a very helpful package for navigating the "what was scary to me" world of http and oauth
+  </li>
+</ol>
+
+<p>
+I will incorporate the original text into the content below.
+</p>
+</div>
+
+<p>The information available from <a href="http://www.flickr.com/services/api/">the Flickr API</a> is incredibly rich.  This Atlantic article <a href="http://www.theatlantic.com/technology/archive/2013/10/this-is-the-world-on-flickr/280697/">This is the World on Flickr</a> motivated me to open up R and do some analysis on the <a href="http://www.flickr.com/explore">Flickr Explore</a> list.  As you might expect, I&#39;ll be using my new favorite tools <a href="http://rcharts.io"><code>rCharts</code></a> and <a href="http://slidify.org"><code>slidify</code></a>.</p>
+
+<h3>ISO Speed Popularity</h3>
+
+<p>I have always wondered what ISO speeds occur most frequently on Explore.  I never imagined that I could answer my question with R.  As usual, we will start by loading all the necessary packages.</p>
+
+<pre><code class="r"># analyze EXIF data for interesting list
+library(httr)
+library(pipeR)
+library(jsonlite)
+</code></pre>
+
+<p>If you do not have a free noncommercial API key, apply for one <a href="http://www.flickr.com/services/api/keys/">here</a>.  Trust me it is very easy, so don&#39;t let this be an excuse not to try it out.  I put mine in a little <code>secrets.Rdata</code> file that I will load with following code and then start a session.</p>
+
+<pre><code class="r">load(&quot;secrets.Rdata&quot;)
+
+flickr.app &lt;- oauth_app(&quot;r to flickr&quot;,api_key,secret)
+flickr.endpoint &lt;- oauth_endpoint(
+  request = &quot;https://www.flickr.com/services/oauth/request_token&quot;
+  , authorize = &quot;https://www.flickr.com/services/oauth/authorize&quot;
+  , access = &quot;https://www.flickr.com/services/oauth/access_token&quot;
+)
+
+tok &lt;- oauth1.0_token(
+  flickr.endpoint
+  , flickr.app
+  , cache = F
+)
+</code></pre>
+
+<p>Since this is more a proof of concept rather than an ambitious scientific study, I&#39;ll just look back three days.</p>
+
+<pre><code class="r">#use this to specify how many days to analyze
+daysAnalyze = 3
+</code></pre>
+
+<p>My code gets a little sloppy here but it does work.  Originally I was forced to use a whole lot of <code>lapply</code>, but <code>httr</code> plays nicely with JSON, and <code>jsonlite</code> converts it to traditional R data stuctures.  I hope my comments will help you understand each of the steps.</p>
+
+<h5>Get the Interesting</h5>
+
+<pre><code class="r">#initialize a data frame to collect 
+interesting &lt;- lapply(1:daysAnalyze, function(i){
+    interesting &lt;- GET(url=sprintf(
+      &quot;https://api.flickr.com/services/rest/?method=flickr.interestingness.getList&amp;api_key=%s&amp;date=%s&amp;format=json&amp;nojsoncallback=1&quot;
+      , api_key
+      , format( Sys.Date() - i, &quot;%Y-%m-%d&quot;)
+      , tok$credentials$oauth_token
+      )
+    ) %&gt;&gt;%
+      content( as = &quot;text&quot; ) %&gt;&gt;%
+      jsonlite::fromJSON () %:&gt;%
+      .$photos$photo %&gt;&gt;%
+      return
+  }
+)
+</code></pre>
+
+<h5>Get EXIF for the Interesting</h5>
+  
+
+<pre><code class="r">  #for each photo try to get the exif information
+  #Flickr allows users to block EXIF
+  #so use try to bypass error
+  exifData &lt;- lapply( 
+    1:nrow(interesting$photos$photo),
+    function(x){
+      exif &lt;- try(
+        GET(url=sprintf(
+          &quot;https://api.flickr.com/services/rest/?method=flickr.photos.getExif&amp;api_key=%s&amp;photo_id=%s&amp;secret=%s&amp;format=json&amp;nojsoncallback=1&quot;
+          , api_key
+          , interesting$photos$photo$id[x]
+          , interesting$photos$photo$secret[x]
+          )
+        ) %&gt;&gt;%
+          content( as = &quot;text&quot; ) %&gt;&gt;%
+          jsonlite::fromJSON ()
+      )
+      if (inherits(exif, &quot;try-error&quot;)) exif = NA
+      return(exif)
+    }
+  )
+
+  #now that we have a list of EXIF for each photo
+  #that allows it
+  #use another lapply
+  #to extract the useful information
+  exifData.df &lt;- lapply(
+    exifData,
+    function(x){
+      if (!(is.na(x))) {
+        exif.df &lt;- do.call(rbind,lapply(
+          1:(length(x)-1),
+          function(y) {
+            df &lt;- data.frame(
+              t(
+                data.frame(
+                  x[[y]][&quot;.attrs&quot;]
+                )
+              ),
+              x[[y]][&quot;raw&quot;],
+              stringsAsFactors = FALSE
+            )
+            rownames(df)&lt;-y
+            if(&quot;clean&quot; %in% names(x[[y]])) {
+              df$clean = x[[y]][&quot;clean&quot;]
+            } else df$clean = NA
+            return(as.vector(df))
+          })
+        )
+      } else exif.df &lt;- rep(NA,5)
+      return(exif.df)
+    }
+  )
+
+  #think we can eliminate the above since we will get a df straight from the json
+  # so for each exif in list get the exif data.frame and find ISO
+  x&lt;-exif[[1]]$exif
+
+  #one more lapply to just get the ISO speed if available
+  isospeeds &lt;- unlist(lapply(
+    exifData.df,
+    function(x){
+      if(!(is.na(x))) {
+        iso = x[which(x[,&quot;label&quot;]==&quot;ISO Speed&quot;),&quot;raw&quot;]
+      } else iso = NA
+      return(as.numeric(iso))
+    }
+  ))
+
+  #make one data.frame with a Frequency(count) of ISO speeds
+  df &lt;- rbind(
+    df,
+    data.frame(
+      as.character(today()-ddays(i)),
+      table(isospeeds)
+    )
+  )
+}
+#name columns for our df data.frame
+colnames(df) &lt;- c(&quot;date&quot;,&quot;iso&quot;,&quot;Freq&quot;)
+#get rid of factors
+#thanks http://stackoverflow.com/questions/3418128/how-to-convert-a-factor-to-an-integer-numeric-without-a-loss-of-information
+df$iso &lt;- as.character(levels(df$iso))[df$iso]
+</code></pre>
+
+<h3>Plot Our Results</h3>
+
+<p>Now that we have a <code>data.frame</code> with ISO speeds, let&#39;s use <code>rCharts</code> to analyze it.  I will use <a href="http://dimplejs.org"><code>dimplejs</code></a>.</p>
+
+<pre><code class="r"># Thanks to http://tradeblotter.wordpress.com/
+# Qualitative color schemes by Paul Tol
+ tol4qualitative=c(&quot;#4477AA&quot;, &quot;#117733&quot;, &quot;#DDCC77&quot;, &quot;#CC6677&quot;)
+
+require(rCharts)
+dIso &lt;- dPlot(
+  y = &quot;Freq&quot;,
+  x = &quot;iso&quot;,
+  groups = &quot;date&quot;,
+  data = df,
+  type = &quot;bar&quot;,
+  height = 400,
+  width =600
+)
+dIso$xAxis( orderRule = &quot;iso&quot; )
+dIso$defaultColors(
+  #&quot;#! d3.scale.category10() !#&quot;, 
+  tol4qualitative,
+  replace = T
+)
+dIso
+</code></pre>
+
+<pre><code class="r">dIso &lt;- dPlot(
+  y = &quot;Freq&quot;,
+  x = c(&quot;iso&quot;,&quot;date&quot;),
+  groups = &quot;date&quot;,
+  data = df,
+  type = &quot;bar&quot;,
+  height = 400,
+  width =600
+)
+dIso$xAxis( orderRule = &quot;iso&quot; )
+dIso$defaultColors(
+  #&quot;#! d3.scale.category10() !#&quot;, 
+  tol4qualitative,
+  replace = T
+)
+dIso
+</code></pre>
+
+<pre><code class="r">dIso &lt;- dPlot(
+  y = &quot;Freq&quot;,
+  x = c(&quot;date&quot;,&quot;iso&quot;),
+  groups = &quot;date&quot;,
+  data = df,
+  type = &quot;bar&quot;,
+  height = 400,
+  width =600
+)
+dIso$xAxis( grouporderRule = &quot;iso&quot; )
+dIso$defaultColors(
+  #&quot;#! d3.scale.category10() !#&quot;, 
+  tol4qualitative,
+  replace = T
+)
+dIso
+</code></pre>
+
+<pre><code class="r">dIso &lt;- dPlot(
+  y = &quot;Freq&quot;,
+  x = &quot;iso&quot;,
+  groups = &quot;date&quot;,
+  data = df,
+  type = &quot;line&quot;,
+  height = 400,
+  width =600
+)
+dIso$xAxis( orderRule = &quot;iso&quot; )
+dIso$defaultColors(
+  #&quot;#! d3.scale.category10() !#&quot;, 
+  tol4qualitative,
+  replace = T
+)
+dIso
+</code></pre>
+
+<pre><code class="r">dIso &lt;- dPlot(
+  y = &quot;Freq&quot;,
+  x = c(&quot;date&quot;,&quot;iso&quot;),
+  groups = &quot;date&quot;,
+  data = df,
+  type = &quot;area&quot;,
+  height = 400,
+  width =600
+)
+dIso$xAxis( grouporderRule = &quot;iso&quot; )
+dIso$defaultColors(
+  #&quot;#! d3.scale.category10() !#&quot;, 
+  tol4qualitative,
+  replace = T
+)
+dIso
+</code></pre>
+
+<p>As you might already know, I love R, especially with <a href="http://rcharts.io">rCharts</a> and <a href="http://slidify.org">slidify</a>.</p>
+
+    </div>
+        
+</body>
+  <script src="libraries/frameworks/bootstrap/js/vendor/bootstrap.min.js"></script>
+  <script src="libraries/frameworks/bootstrap/js/plugins.js"></script>
+  <script src="libraries/frameworks/bootstrap/js/main.js"></script>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- Google Prettify -->
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/prettify/188.0.0/prettify.js"></script>
+  <script src='libraries/highlighters/prettify/js/lang-r.js'></script>
+  <script>
+    var pres = document.getElementsByTagName("pre");
+    for (var i=0; i < pres.length; ++i) {
+      pres[i].className = "prettyprint linenums";
+    }
+    prettyPrint();
+  </script>
+  <!-- End Google Prettify --> 
+  </html>
