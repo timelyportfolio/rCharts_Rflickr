@@ -45,7 +45,8 @@ iframe {height: 420px; width: 620px}
   
 <a href="https://github.com/timelyportfolio/rCharts_Rflickr"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
 
-# Flickr Interesting ISOs with Rflickr & rCharts + slidify
+<div class = "hero-unit">
+<h1> Flickr Interesting ISOs with httr & rCharts + slidify </h1>
 
 ```{r message = F, warning = F, error = F, echo = F, tidy = F, cache = F}
 require(knitr)
@@ -61,7 +62,7 @@ opts_chunk$set(
   eval=F
 )
 ```
-<div class = "well">
+
 <p>
 I have rewritten <a href = "http://timelyportfolio.blogspot.com/2013/10/iso-popularity-on-flickr-explore.html">this old post</a> to use Hadley Wickham's <a href = "http://github.com/hadley/httr"><code>httr</code> </a> instead of <code>Rflickr</code> for two reasons:
 </p>
@@ -76,7 +77,7 @@ I have rewritten <a href = "http://timelyportfolio.blogspot.com/2013/10/iso-popu
 </ol>
 
 <p>
-In addition to the changes above, I will also demonstrate use of the <a href = "http://renkun.me/blog/2014/07/26/difference-between-magrittr-and-pipeR.html"><code>pipeR</code></a> package from <a href = "http://renkun.me/">Kun Ren</a> who has been quite prolific lately.
+In addition to the changes above, I will also demonstrate use of the <a href = "http://renkun.me/blog/2014/07/26/difference-between-magrittr-and-pipeR.html"><code>pipeR</code></a> package from <a href = "http://renkun.me/">Kun Ren</a> who has been quite prolific lately.  I feel pretty strongly I will be rewriting this post one more time in the near future employing his <a href ="http://renkun.me/blog/2014/06/26/rlist-a-new-package-for-working-with-list-objects-in-r.html"><code>rlist</code></a> package.
 </p>
 
 <p>
@@ -84,11 +85,13 @@ I will incorporate the original text into the content below.
 </p>
 </div>
 
+
 The information available from [the Flickr API](http://www.flickr.com/services/api/) is incredibly rich.  This Atlantic article [This is the World on Flickr](http://www.theatlantic.com/technology/archive/2013/10/this-is-the-world-on-flickr/280697/) motivated me to open up R and do some analysis on the [Flickr Explore](http://www.flickr.com/explore) list.  As you might expect, I'll be using my new favorite tools [`rCharts`](http://rcharts.io) and [`slidify`](http://slidify.org).
 
 ### ISO Speed Popularity
 I have always wondered what ISO speeds occur most frequently on Explore.  I never imagined that I could answer my question with R.  As usual, we will start by loading all the necessary packages.
 
+<h5>Load Our Packages</h5>
 ```{r}
 # analyze EXIF data for interesting list
 library(httr)
@@ -98,6 +101,7 @@ library(jsonlite)
 
 If you do not have a free noncommercial API key, apply for one [here](http://www.flickr.com/services/api/keys/).  Trust me it is very easy, so don't let this be an excuse not to try it out.  I put mine in a little `secrets.Rdata` file that I will load with following code and then start a session.
 
+<h5>Authorize Our flickr</h5>
 
 ```{r}
 load("secrets.Rdata")
@@ -130,7 +134,7 @@ My code gets a little sloppy here but it does work.  Originally I was forced to 
 This will give us a list `interesting` with about 100 photos for each day.  We could get up to 500 per day if we are ambitious with the [per page](https://www.flickr.com/services/api/flickr.interestingness.getList.htm) API option.
 
 ```{r}
-#initialize a data frame to collect 
+#get a list and then make it a data frame 
 interesting <- lapply(1:daysAnalyze, function(i){
     GET(url=sprintf(
       "https://api.flickr.com/services/rest/?method=flickr.interestingness.getList&api_key=%s&date=%s&format=json&nojsoncallback=1"
@@ -141,100 +145,75 @@ interesting <- lapply(1:daysAnalyze, function(i){
     ) %>>%
       content( as = "text" ) %>>%
       jsonlite::fromJSON () %:>%
-      .$photos$photo %>>%
+      .$photos$photo %:>%
+      data.frame(
+        date = format( Sys.Date() - i, "%Y-%m-%d")
+        ,.
+        ,stringsAsFactors=F
+      ) %>>%
       return
   }
-)
+) %:>%
+  # combine all the days into a data frame
+  do.call(rbind, .)
 ```
 
 <h5>Get EXIF for the Interesting</h5>
 
-Now that we have some interesting photos, we can use [flickr.photos.getExif](https://www.flickr.com/services/api/flickr.photos.getExif.html) for all sorts of meta information.
+Now that we have some interesting photos, we can use [flickr.photos.getExif](https://www.flickr.com/services/api/flickr.photos.getExif.html) for all sorts of meta information embedded in the EXIF.
 
 ```{r}
   #for each photo try to get the exif information
   #Flickr allows users to block EXIF
   #so use try to bypass error
-  exifData <- lapply( 
-    1:nrow(interesting),
-    function(x){
-      exif <- try(
+  #in case you are wondering, yes we could use dplyr here
+  exifData <- lapply(
+    1:nrow(interesting)
+    ,function(photo){  # now we will process each photo
+      exif <-
         GET(url=sprintf(
           "https://api.flickr.com/services/rest/?method=flickr.photos.getExif&api_key=%s&photo_id=%s&secret=%s&format=json&nojsoncallback=1"
           , api_key
-          , interesting$photos$photo$id[x]
-          , interesting$photos$photo$secret[x]
+          , interesting[photo,"id"]
+          , interesting[photo,"secret"]
           )
         ) %>>%
           content( as = "text" ) %>>%
           jsonlite::fromJSON ()
-      )
-      if (inherits(exif, "try-error")) exif = NA
-      return(exif)
     }
-  )
-  
+  )# %>>% could chain it, but want to keep exifData
+
   #now that we have a list of EXIF for each photo
-  #that allows it
   #use another lapply
   #to extract the useful information
-  exifData.df <- lapply(
-    exifData,
-    function(x){
-      if (!(is.na(x))) {
-        exif.df <- do.call(rbind,lapply(
-          1:(length(x)-1),
-          function(y) {
-            df <- data.frame(
-              t(
-                data.frame(
-                  x[[y]][".attrs"]
-                )
-              ),
-              x[[y]]["raw"],
-              stringsAsFactors = FALSE
-            )
-            rownames(df)<-y
-            if("clean" %in% names(x[[y]])) {
-              df$clean = x[[y]]["clean"]
-            } else df$clean = NA
-            return(as.vector(df))
-          })
-        )
-      } else exif.df <- rep(NA,5)
-      return(exif.df)
-    }
-  )
-  
-  #think we can eliminate the above since we will get a df straight from the json
-  # so for each exif in list get the exif data.frame and find ISO
-  x<-exif[[1]]$exif
-  
-  #one more lapply to just get the ISO speed if available
-  isospeeds <- unlist(lapply(
-    exifData.df,
-    function(x){
-      if(!(is.na(x))) {
-        iso = x[which(x[,"label"]=="ISO Speed"),"raw"]
-      } else iso = NA
-      return(as.numeric(iso))
-    }
-  ))
-  
-  #make one data.frame with a Frequency(count) of ISO speeds
-  df <- rbind(
-    df,
-    data.frame(
-      as.character(today()-ddays(i)),
-      table(isospeeds)
-    )
-  )
-}
-#name columns for our df data.frame
-colnames(df) <- c("date","iso","Freq")
-#get rid of factors
-#thanks http://stackoverflow.com/questions/3418128/how-to-convert-a-factor-to-an-integer-numeric-without-a-loss-of-information
-df$iso <- as.character(levels(df$iso))[df$iso]
+  iso <- exifData %:>% 
+    lapply(
+      1:length(.)
+      ,function(photo){
+        # some photos will not have exif if their owners disable it
+        # and the api call will give us a stat "fail" instead of "ok"
+        ifelse ( 
+          exifData[[photo]]$stat == "ok" 
+          ,exifData[[photo]]$photo$exif[
+            which(exifData[[photo]]$photo$exif[,"label"]=="ISO Speed"),"raw"
+          ] %>>%
+            as.numeric
+          ,NA
+        ) %:>%
+        data.frame(
+          interesting[photo,c("date","id")]
+          ,"iso" = .
+        ) %>>%
+        return
+      }
+    ) %:>%
+    do.call(rbind,.) %:>%
+    with(
+      .
+      ,table(date,iso)
+    ) %>>%
+    data.frame( stringsAsFactors = F)
+
 ```
 
 
@@ -243,104 +222,87 @@ df$iso <- as.character(levels(df$iso))[df$iso]
 Now that we have a `data.frame` with ISO speeds, let's use `rCharts` to analyze it.  I will use [`dimplejs`](http://dimplejs.org).
 
 
-```{r}
+```{r eval = T}
 # Thanks to http://tradeblotter.wordpress.com/
 # Qualitative color schemes by Paul Tol
- tol4qualitative=c("#4477AA", "#117733", "#DDCC77", "#CC6677")
+tol4qualitative=c("#4477AA", "#117733", "#DDCC77", "#CC6677")
 
 require(rCharts)
-dIso <- dPlot(
+iso %:>% dPlot(
   y = "Freq",
   x = "iso",
   groups = "date",
-  data = df,
+  data = .,
   type = "bar",
   height = 400,
   width =600
-)
-dIso$xAxis( orderRule = "iso" )
-dIso$defaultColors(
-  #"#! d3.scale.category10() !#", 
-  tol4qualitative,
-  replace = T
-)
-dIso
+  ,xAxis = list( orderRule = sort( .$iso ) )
+  ,defaultColors = tol4qualitative
+) %:>% .$show("inline")
+
 ```
 
-```{r}
-dIso <- dPlot(
+```{r eval = T}
+iso %:>% dPlot(
   y = "Freq",
   x = c("iso","date"),
   groups = "date",
-  data = df,
+  data = .,
   type = "bar",
   height = 400,
   width =600
-)
-dIso$xAxis( orderRule = "iso" )
-dIso$defaultColors(
-  #"#! d3.scale.category10() !#", 
-  tol4qualitative,
-  replace = T
-)
-dIso
+  ,xAxis = list( orderRule = sort( .$iso ) )
+  ,defaultColors = tol4qualitative  
+) %:>% .$show("inline")
 ```
 
-```{r}
-dIso <- dPlot(
+```{r eval = T}
+iso %:>% dPlot(
   y = "Freq",
   x = c("date","iso"),
   groups = "date",
-  data = df,
+  data = .,
   type = "bar",
   height = 400,
   width =600
-)
-dIso$xAxis( grouporderRule = "iso" )
-dIso$defaultColors(
-  #"#! d3.scale.category10() !#", 
-  tol4qualitative,
-  replace = T
-)
-dIso
+  ,xAxis = list( grouporderRule = sort( .$iso ) )
+  ,defaultColors = tol4qualitative 
+)  %:>% .$show("inline")
+
 ```
 
-```{r}
-dIso <- dPlot(
+```{r eval = T}
+iso %:>% dPlot(
   y = "Freq",
   x = "iso",
   groups = "date",
-  data = df,
+  data = .,
   type = "line",
   height = 400,
   width =600
-)
-dIso$xAxis( orderRule = "iso" )
-dIso$defaultColors(
-  #"#! d3.scale.category10() !#", 
-  tol4qualitative,
-  replace = T
-)
-dIso
+  ,xAxis = list( orderRule = sort( .$iso ) )
+  ,defaultColors = tol4qualitative   
+) %:>% .$show("inline")
 ```
 
 ```{r}
-dIso <- dPlot(
+iso %:>% dPlot(
   y = "Freq",
   x = c("date","iso"),
   groups = "date",
-  data = df,
+  data = .,
   type = "area",
   height = 400,
   width =600
-)
-dIso$xAxis( grouporderRule = "iso" )
-dIso$defaultColors(
-  #"#! d3.scale.category10() !#", 
-  tol4qualitative,
-  replace = T
-)
-dIso
+  ,xAxis = list( grouporderRule = sort( .$iso ) )
+  ,defaultColors = tol4qualitative 
+) %:>% .$show("inline")
 ```
 
 As you might already know, I love R, especially with [rCharts](http://rcharts.io) and [slidify](http://slidify.org).
+
+Now I can add that I love [httr](http://github.com/hadley/dplyr) and [pipeR](http://renkun.me/blog/2014/07/26/difference-between-magrittr-and-pipeR.html).
+
+Thanks to all those who contributed knowingly and unknowingly to this post.
+
+
