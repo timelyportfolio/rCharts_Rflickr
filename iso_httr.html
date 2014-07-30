@@ -97,6 +97,10 @@ I have rewritten <a href = "http://timelyportfolio.blogspot.com/2013/10/iso-popu
 </ol>
 
 <p>
+In addition to the changes above, I will also demonstrate use of the <a href = "http://renkun.me/blog/2014/07/26/difference-between-magrittr-and-pipeR.html"><code>pipeR</code></a> package from <a href = "http://renkun.me/">Kun Ren</a> who has been quite prolific lately.
+</p>
+
+<p>
 I will incorporate the original text into the content below.
 </p>
 </div>
@@ -141,9 +145,11 @@ daysAnalyze = 3
 
 <h5>Get the Interesting</h5>
 
+<p>This will give us a list <code>interesting</code> with about 100 photos for each day.  We could get up to 500 per day if we are ambitious with the <a href="https://www.flickr.com/services/api/flickr.interestingness.getList.htm">per page</a> API option.</p>
+
 <pre><code class="r">#initialize a data frame to collect 
 interesting &lt;- lapply(1:daysAnalyze, function(i){
-    interesting &lt;- GET(url=sprintf(
+    GET(url=sprintf(
       &quot;https://api.flickr.com/services/rest/?method=flickr.interestingness.getList&amp;api_key=%s&amp;date=%s&amp;format=json&amp;nojsoncallback=1&quot;
       , api_key
       , format( Sys.Date() - i, &quot;%Y-%m-%d&quot;)

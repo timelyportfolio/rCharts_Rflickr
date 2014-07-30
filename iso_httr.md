@@ -63,6 +63,10 @@ I have rewritten <a href = "http://timelyportfolio.blogspot.com/2013/10/iso-popu
 </ol>
 
 <p>
+In addition to the changes above, I will also demonstrate use of the <a href = "http://renkun.me/blog/2014/07/26/difference-between-magrittr-and-pipeR.html"><code>pipeR</code></a> package from <a href = "http://renkun.me/">Kun Ren</a> who has been quite prolific lately.
+</p>
+
+<p>
 I will incorporate the original text into the content below.
 </p>
 </div>
@@ -113,11 +117,13 @@ My code gets a little sloppy here but it does work.  Originally I was forced to 
 
 <h5>Get the Interesting</h5>
 
+This will give us a list `interesting` with about 100 photos for each day.  We could get up to 500 per day if we are ambitious with the [per page](https://www.flickr.com/services/api/flickr.interestingness.getList.htm) API option.
+
 
 ```r
 #initialize a data frame to collect 
 interesting <- lapply(1:daysAnalyze, function(i){
-    interesting <- GET(url=sprintf(
+    GET(url=sprintf(
       "https://api.flickr.com/services/rest/?method=flickr.interestingness.getList&api_key=%s&date=%s&format=json&nojsoncallback=1"
       , api_key
       , format( Sys.Date() - i, "%Y-%m-%d")
