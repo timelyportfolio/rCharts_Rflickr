@@ -180,26 +180,28 @@ Now that we have some interesting photos, we can use [flickr.photos.getExif](htt
   #use another lapply
   #to extract the useful information
   iso <- exifData %>>% 
-    ( lapply(
-      1:length(.)
-      ,function(photo){
-        # some photos will not have exif if their owners disable it
-        # and the api call will give us a stat "fail" instead of "ok"
-        ifelse ( 
-          exifData[[photo]]$stat == "ok" 
-          ,exifData[[photo]]$photo$exif[
-            which(exifData[[photo]]$photo$exif[,"label"]=="ISO Speed"),"raw"
-          ] %>>%
-            as.numeric
-          ,NA
-        ) %>>%
-        ( data.frame(
-          interesting[photo,c("date","id")]
-          ,"iso" = .
-        )) %>>%
-        return
-      }
-    ) ) %>>%
+    {
+      lapply(
+        1:length(.)
+        ,function(photo){
+          # some photos will not have exif if their owners disable it
+          # and the api call will give us a stat "fail" instead of "ok"
+          ifelse ( 
+            exifData[[photo]]$stat == "ok" 
+            ,exifData[[photo]]$photo$exif[
+              which(exifData[[photo]]$photo$exif[,"label"]=="ISO Speed"),"raw"
+            ] %>>%
+              as.numeric
+            ,NA
+          ) %>>%
+          ( data.frame(
+            interesting[photo,c("date","id")]
+            ,"iso" = .
+          )) %>>%
+          return
+        }
+      )
+    } %>>%
     ( do.call(rbind,.) ) %>>%
     (with(
       .
@@ -235,11 +237,11 @@ iso %>>% ( dPlot(
 ```
 
 
-<div id = 'chart25b840e64bb2' class = 'rChart dimple'></div>
+<div id = 'chart25b83eea37c9' class = 'rChart dimple'></div>
 <script>
-var chart25b840e64bb2 = (function() {
+var chart25b83eea37c9 = (function() {
   var opts = {
- "dom": "chart25b840e64bb2",
+ "dom": "chart25b83eea37c9",
 "width":    600,
 "height":    400,
 "xAxis": {
@@ -260,7 +262,7 @@ var chart25b840e64bb2 = (function() {
 "y": "Freq",
 "groups": "date",
 "type": "bar",
-"id": "chart25b840e64bb2" 
+"id": "chart25b83eea37c9" 
 },
     data = [{"date":"2014-08-01","iso":"0","Freq":0},{"date":"2014-08-02","iso":"0","Freq":2},{"date":"2014-08-03","iso":"0","Freq":2},{"date":"2014-08-01","iso":"50","Freq":0},{"date":"2014-08-02","iso":"50","Freq":1},{"date":"2014-08-03","iso":"50","Freq":1},{"date":"2014-08-01","iso":"64","Freq":0},{"date":"2014-08-02","iso":"64","Freq":0},{"date":"2014-08-03","iso":"64","Freq":1},{"date":"2014-08-01","iso":"80","Freq":2},{"date":"2014-08-02","iso":"80","Freq":1},{"date":"2014-08-03","iso":"80","Freq":0},{"date":"2014-08-01","iso":"100","Freq":19},{"date":"2014-08-02","iso":"100","Freq":19},{"date":"2014-08-03","iso":"100","Freq":30},{"date":"2014-08-01","iso":"125","Freq":4},{"date":"2014-08-02","iso":"125","Freq":4},{"date":"2014-08-03","iso":"125","Freq":4},{"date":"2014-08-01","iso":"160","Freq":3},{"date":"2014-08-02","iso":"160","Freq":3},{"date":"2014-08-03","iso":"160","Freq":1},{"date":"2014-08-01","iso":"200","Freq":18},{"date":"2014-08-02","iso":"200","Freq":12},{"date":"2014-08-03","iso":"200","Freq":10},{"date":"2014-08-01","iso":"250","Freq":2},{"date":"2014-08-02","iso":"250","Freq":1},{"date":"2014-08-03","iso":"250","Freq":2},{"date":"2014-08-01","iso":"300","Freq":0},{"date":"2014-08-02","iso":"300","Freq":1},{"date":"2014-08-03","iso":"300","Freq":0},{"date":"2014-08-01","iso":"320","Freq":2},{"date":"2014-08-02","iso":"320","Freq":2},{"date":"2014-08-03","iso":"320","Freq":4},{"date":"2014-08-01","iso":"400","Freq":6},{"date":"2014-08-02","iso":"400","Freq":8},{"date":"2014-08-03","iso":"400","Freq":7},{"date":"2014-08-01","iso":"500","Freq":1},{"date":"2014-08-02","iso":"500","Freq":1},{"date":"2014-08-03","iso":"500","Freq":4},{"date":"2014-08-01","iso":"560","Freq":0},{"date":"2014-08-02","iso":"560","Freq":1},{"date":"2014-08-03","iso":"560","Freq":0},{"date":"2014-08-01","iso":"640","Freq":3},{"date":"2014-08-02","iso":"640","Freq":0},{"date":"2014-08-03","iso":"640","Freq":2},{"date":"2014-08-01","iso":"720","Freq":0},{"date":"2014-08-02","iso":"720","Freq":0},{"date":"2014-08-03","iso":"720","Freq":1},{"date":"2014-08-01","iso":"800","Freq":5},{"date":"2014-08-02","iso":"800","Freq":3},{"date":"2014-08-03","iso":"800","Freq":2},{"date":"2014-08-01","iso":"1000","Freq":1},{"date":"2014-08-02","iso":"1000","Freq":2},{"date":"2014-08-03","iso":"1000","Freq":0},{"date":"2014-08-01","iso":"1250","Freq":1},{"date":"2014-08-02","iso":"1250","Freq":0},{"date":"2014-08-03","iso":"1250","Freq":0},{"date":"2014-08-01","iso":"1600","Freq":2},{"date":"2014-08-02","iso":"1600","Freq":3},{"date":"2014-08-03","iso":"1600","Freq":0},{"date":"2014-08-01","iso":"2500","Freq":0},{"date":"2014-08-02","iso":"2500","Freq":0},{"date":"2014-08-03","iso":"2500","Freq":1},{"date":"2014-08-01","iso":"3200","Freq":0},{"date":"2014-08-02","iso":"3200","Freq":1},{"date":"2014-08-03","iso":"3200","Freq":1},{"date":"2014-08-01","iso":"4000","Freq":0},{"date":"2014-08-02","iso":"4000","Freq":0},{"date":"2014-08-03","iso":"4000","Freq":1},{"date":"2014-08-01","iso":"6400","Freq":1},{"date":"2014-08-02","iso":"6400","Freq":1},{"date":"2014-08-03","iso":"6400","Freq":0}];
   
@@ -639,25 +641,29 @@ var chart25b840e64bb2 = (function() {
 
 
 ```r
-iso %>>% ( dPlot(
-  y = "Freq",
-  x = c("iso","date"),
-  groups = "date",
-  data = .,
-  type = "bar",
-  height = 400,
-  width =600
-  ,xAxis = list( orderRule = sort( .$iso ) )
-  ,defaultColors = tol4qualitative  
-) ) %>>% ( .$show("inline") )
+#  using {} instead of () for our enclosure
+#  might be more understandable
+iso %>>% {
+  dPlot(
+    y = "Freq",
+    x = c("iso","date"),
+    groups = "date",
+    data = .,
+    type = "bar",
+    height = 400,
+    width =600
+    ,xAxis = list( orderRule = sort( .$iso ) )
+    ,defaultColors = tol4qualitative
+  )
+} %>>% ( .$show("inline") )
 ```
 
 
-<div id = 'chart25b8312a6d0b' class = 'rChart dimple'></div>
+<div id = 'chart25b8216153df' class = 'rChart dimple'></div>
 <script>
-var chart25b8312a6d0b = (function() {
+var chart25b8216153df = (function() {
   var opts = {
- "dom": "chart25b8312a6d0b",
+ "dom": "chart25b8216153df",
 "width":    600,
 "height":    400,
 "xAxis": {
@@ -678,7 +684,7 @@ var chart25b8312a6d0b = (function() {
 "y": "Freq",
 "groups": "date",
 "type": "bar",
-"id": "chart25b8312a6d0b" 
+"id": "chart25b8216153df" 
 },
     data = [{"date":"2014-08-01","iso":"0","Freq":0},{"date":"2014-08-02","iso":"0","Freq":2},{"date":"2014-08-03","iso":"0","Freq":2},{"date":"2014-08-01","iso":"50","Freq":0},{"date":"2014-08-02","iso":"50","Freq":1},{"date":"2014-08-03","iso":"50","Freq":1},{"date":"2014-08-01","iso":"64","Freq":0},{"date":"2014-08-02","iso":"64","Freq":0},{"date":"2014-08-03","iso":"64","Freq":1},{"date":"2014-08-01","iso":"80","Freq":2},{"date":"2014-08-02","iso":"80","Freq":1},{"date":"2014-08-03","iso":"80","Freq":0},{"date":"2014-08-01","iso":"100","Freq":19},{"date":"2014-08-02","iso":"100","Freq":19},{"date":"2014-08-03","iso":"100","Freq":30},{"date":"2014-08-01","iso":"125","Freq":4},{"date":"2014-08-02","iso":"125","Freq":4},{"date":"2014-08-03","iso":"125","Freq":4},{"date":"2014-08-01","iso":"160","Freq":3},{"date":"2014-08-02","iso":"160","Freq":3},{"date":"2014-08-03","iso":"160","Freq":1},{"date":"2014-08-01","iso":"200","Freq":18},{"date":"2014-08-02","iso":"200","Freq":12},{"date":"2014-08-03","iso":"200","Freq":10},{"date":"2014-08-01","iso":"250","Freq":2},{"date":"2014-08-02","iso":"250","Freq":1},{"date":"2014-08-03","iso":"250","Freq":2},{"date":"2014-08-01","iso":"300","Freq":0},{"date":"2014-08-02","iso":"300","Freq":1},{"date":"2014-08-03","iso":"300","Freq":0},{"date":"2014-08-01","iso":"320","Freq":2},{"date":"2014-08-02","iso":"320","Freq":2},{"date":"2014-08-03","iso":"320","Freq":4},{"date":"2014-08-01","iso":"400","Freq":6},{"date":"2014-08-02","iso":"400","Freq":8},{"date":"2014-08-03","iso":"400","Freq":7},{"date":"2014-08-01","iso":"500","Freq":1},{"date":"2014-08-02","iso":"500","Freq":1},{"date":"2014-08-03","iso":"500","Freq":4},{"date":"2014-08-01","iso":"560","Freq":0},{"date":"2014-08-02","iso":"560","Freq":1},{"date":"2014-08-03","iso":"560","Freq":0},{"date":"2014-08-01","iso":"640","Freq":3},{"date":"2014-08-02","iso":"640","Freq":0},{"date":"2014-08-03","iso":"640","Freq":2},{"date":"2014-08-01","iso":"720","Freq":0},{"date":"2014-08-02","iso":"720","Freq":0},{"date":"2014-08-03","iso":"720","Freq":1},{"date":"2014-08-01","iso":"800","Freq":5},{"date":"2014-08-02","iso":"800","Freq":3},{"date":"2014-08-03","iso":"800","Freq":2},{"date":"2014-08-01","iso":"1000","Freq":1},{"date":"2014-08-02","iso":"1000","Freq":2},{"date":"2014-08-03","iso":"1000","Freq":0},{"date":"2014-08-01","iso":"1250","Freq":1},{"date":"2014-08-02","iso":"1250","Freq":0},{"date":"2014-08-03","iso":"1250","Freq":0},{"date":"2014-08-01","iso":"1600","Freq":2},{"date":"2014-08-02","iso":"1600","Freq":3},{"date":"2014-08-03","iso":"1600","Freq":0},{"date":"2014-08-01","iso":"2500","Freq":0},{"date":"2014-08-02","iso":"2500","Freq":0},{"date":"2014-08-03","iso":"2500","Freq":1},{"date":"2014-08-01","iso":"3200","Freq":0},{"date":"2014-08-02","iso":"3200","Freq":1},{"date":"2014-08-03","iso":"3200","Freq":1},{"date":"2014-08-01","iso":"4000","Freq":0},{"date":"2014-08-02","iso":"4000","Freq":0},{"date":"2014-08-03","iso":"4000","Freq":1},{"date":"2014-08-01","iso":"6400","Freq":1},{"date":"2014-08-02","iso":"6400","Freq":1},{"date":"2014-08-03","iso":"6400","Freq":0}];
   
@@ -1071,11 +1077,11 @@ iso %>>% ( dPlot(
 ```
 
 
-<div id = 'chart25b82baa28c0' class = 'rChart dimple'></div>
+<div id = 'chart25b82eb47' class = 'rChart dimple'></div>
 <script>
-var chart25b82baa28c0 = (function() {
+var chart25b82eb47 = (function() {
   var opts = {
- "dom": "chart25b82baa28c0",
+ "dom": "chart25b82eb47",
 "width":    600,
 "height":    400,
 "xAxis": {
@@ -1096,7 +1102,7 @@ var chart25b82baa28c0 = (function() {
 "y": "Freq",
 "groups": "date",
 "type": "bar",
-"id": "chart25b82baa28c0" 
+"id": "chart25b82eb47" 
 },
     data = [{"date":"2014-08-01","iso":"0","Freq":0},{"date":"2014-08-02","iso":"0","Freq":2},{"date":"2014-08-03","iso":"0","Freq":2},{"date":"2014-08-01","iso":"50","Freq":0},{"date":"2014-08-02","iso":"50","Freq":1},{"date":"2014-08-03","iso":"50","Freq":1},{"date":"2014-08-01","iso":"64","Freq":0},{"date":"2014-08-02","iso":"64","Freq":0},{"date":"2014-08-03","iso":"64","Freq":1},{"date":"2014-08-01","iso":"80","Freq":2},{"date":"2014-08-02","iso":"80","Freq":1},{"date":"2014-08-03","iso":"80","Freq":0},{"date":"2014-08-01","iso":"100","Freq":19},{"date":"2014-08-02","iso":"100","Freq":19},{"date":"2014-08-03","iso":"100","Freq":30},{"date":"2014-08-01","iso":"125","Freq":4},{"date":"2014-08-02","iso":"125","Freq":4},{"date":"2014-08-03","iso":"125","Freq":4},{"date":"2014-08-01","iso":"160","Freq":3},{"date":"2014-08-02","iso":"160","Freq":3},{"date":"2014-08-03","iso":"160","Freq":1},{"date":"2014-08-01","iso":"200","Freq":18},{"date":"2014-08-02","iso":"200","Freq":12},{"date":"2014-08-03","iso":"200","Freq":10},{"date":"2014-08-01","iso":"250","Freq":2},{"date":"2014-08-02","iso":"250","Freq":1},{"date":"2014-08-03","iso":"250","Freq":2},{"date":"2014-08-01","iso":"300","Freq":0},{"date":"2014-08-02","iso":"300","Freq":1},{"date":"2014-08-03","iso":"300","Freq":0},{"date":"2014-08-01","iso":"320","Freq":2},{"date":"2014-08-02","iso":"320","Freq":2},{"date":"2014-08-03","iso":"320","Freq":4},{"date":"2014-08-01","iso":"400","Freq":6},{"date":"2014-08-02","iso":"400","Freq":8},{"date":"2014-08-03","iso":"400","Freq":7},{"date":"2014-08-01","iso":"500","Freq":1},{"date":"2014-08-02","iso":"500","Freq":1},{"date":"2014-08-03","iso":"500","Freq":4},{"date":"2014-08-01","iso":"560","Freq":0},{"date":"2014-08-02","iso":"560","Freq":1},{"date":"2014-08-03","iso":"560","Freq":0},{"date":"2014-08-01","iso":"640","Freq":3},{"date":"2014-08-02","iso":"640","Freq":0},{"date":"2014-08-03","iso":"640","Freq":2},{"date":"2014-08-01","iso":"720","Freq":0},{"date":"2014-08-02","iso":"720","Freq":0},{"date":"2014-08-03","iso":"720","Freq":1},{"date":"2014-08-01","iso":"800","Freq":5},{"date":"2014-08-02","iso":"800","Freq":3},{"date":"2014-08-03","iso":"800","Freq":2},{"date":"2014-08-01","iso":"1000","Freq":1},{"date":"2014-08-02","iso":"1000","Freq":2},{"date":"2014-08-03","iso":"1000","Freq":0},{"date":"2014-08-01","iso":"1250","Freq":1},{"date":"2014-08-02","iso":"1250","Freq":0},{"date":"2014-08-03","iso":"1250","Freq":0},{"date":"2014-08-01","iso":"1600","Freq":2},{"date":"2014-08-02","iso":"1600","Freq":3},{"date":"2014-08-03","iso":"1600","Freq":0},{"date":"2014-08-01","iso":"2500","Freq":0},{"date":"2014-08-02","iso":"2500","Freq":0},{"date":"2014-08-03","iso":"2500","Freq":1},{"date":"2014-08-01","iso":"3200","Freq":0},{"date":"2014-08-02","iso":"3200","Freq":1},{"date":"2014-08-03","iso":"3200","Freq":1},{"date":"2014-08-01","iso":"4000","Freq":0},{"date":"2014-08-02","iso":"4000","Freq":0},{"date":"2014-08-03","iso":"4000","Freq":1},{"date":"2014-08-01","iso":"6400","Freq":1},{"date":"2014-08-02","iso":"6400","Freq":1},{"date":"2014-08-03","iso":"6400","Freq":0}];
   
@@ -1489,11 +1495,11 @@ iso %>>% ( dPlot(
 ```
 
 
-<div id = 'chart25b835dd656f' class = 'rChart dimple'></div>
+<div id = 'chart25b855412e91' class = 'rChart dimple'></div>
 <script>
-var chart25b835dd656f = (function() {
+var chart25b855412e91 = (function() {
   var opts = {
- "dom": "chart25b835dd656f",
+ "dom": "chart25b855412e91",
 "width":    600,
 "height":    400,
 "xAxis": {
@@ -1514,7 +1520,7 @@ var chart25b835dd656f = (function() {
 "y": "Freq",
 "groups": "date",
 "type": "line",
-"id": "chart25b835dd656f" 
+"id": "chart25b855412e91" 
 },
     data = [{"date":"2014-08-01","iso":"0","Freq":0},{"date":"2014-08-02","iso":"0","Freq":2},{"date":"2014-08-03","iso":"0","Freq":2},{"date":"2014-08-01","iso":"50","Freq":0},{"date":"2014-08-02","iso":"50","Freq":1},{"date":"2014-08-03","iso":"50","Freq":1},{"date":"2014-08-01","iso":"64","Freq":0},{"date":"2014-08-02","iso":"64","Freq":0},{"date":"2014-08-03","iso":"64","Freq":1},{"date":"2014-08-01","iso":"80","Freq":2},{"date":"2014-08-02","iso":"80","Freq":1},{"date":"2014-08-03","iso":"80","Freq":0},{"date":"2014-08-01","iso":"100","Freq":19},{"date":"2014-08-02","iso":"100","Freq":19},{"date":"2014-08-03","iso":"100","Freq":30},{"date":"2014-08-01","iso":"125","Freq":4},{"date":"2014-08-02","iso":"125","Freq":4},{"date":"2014-08-03","iso":"125","Freq":4},{"date":"2014-08-01","iso":"160","Freq":3},{"date":"2014-08-02","iso":"160","Freq":3},{"date":"2014-08-03","iso":"160","Freq":1},{"date":"2014-08-01","iso":"200","Freq":18},{"date":"2014-08-02","iso":"200","Freq":12},{"date":"2014-08-03","iso":"200","Freq":10},{"date":"2014-08-01","iso":"250","Freq":2},{"date":"2014-08-02","iso":"250","Freq":1},{"date":"2014-08-03","iso":"250","Freq":2},{"date":"2014-08-01","iso":"300","Freq":0},{"date":"2014-08-02","iso":"300","Freq":1},{"date":"2014-08-03","iso":"300","Freq":0},{"date":"2014-08-01","iso":"320","Freq":2},{"date":"2014-08-02","iso":"320","Freq":2},{"date":"2014-08-03","iso":"320","Freq":4},{"date":"2014-08-01","iso":"400","Freq":6},{"date":"2014-08-02","iso":"400","Freq":8},{"date":"2014-08-03","iso":"400","Freq":7},{"date":"2014-08-01","iso":"500","Freq":1},{"date":"2014-08-02","iso":"500","Freq":1},{"date":"2014-08-03","iso":"500","Freq":4},{"date":"2014-08-01","iso":"560","Freq":0},{"date":"2014-08-02","iso":"560","Freq":1},{"date":"2014-08-03","iso":"560","Freq":0},{"date":"2014-08-01","iso":"640","Freq":3},{"date":"2014-08-02","iso":"640","Freq":0},{"date":"2014-08-03","iso":"640","Freq":2},{"date":"2014-08-01","iso":"720","Freq":0},{"date":"2014-08-02","iso":"720","Freq":0},{"date":"2014-08-03","iso":"720","Freq":1},{"date":"2014-08-01","iso":"800","Freq":5},{"date":"2014-08-02","iso":"800","Freq":3},{"date":"2014-08-03","iso":"800","Freq":2},{"date":"2014-08-01","iso":"1000","Freq":1},{"date":"2014-08-02","iso":"1000","Freq":2},{"date":"2014-08-03","iso":"1000","Freq":0},{"date":"2014-08-01","iso":"1250","Freq":1},{"date":"2014-08-02","iso":"1250","Freq":0},{"date":"2014-08-03","iso":"1250","Freq":0},{"date":"2014-08-01","iso":"1600","Freq":2},{"date":"2014-08-02","iso":"1600","Freq":3},{"date":"2014-08-03","iso":"1600","Freq":0},{"date":"2014-08-01","iso":"2500","Freq":0},{"date":"2014-08-02","iso":"2500","Freq":0},{"date":"2014-08-03","iso":"2500","Freq":1},{"date":"2014-08-01","iso":"3200","Freq":0},{"date":"2014-08-02","iso":"3200","Freq":1},{"date":"2014-08-03","iso":"3200","Freq":1},{"date":"2014-08-01","iso":"4000","Freq":0},{"date":"2014-08-02","iso":"4000","Freq":0},{"date":"2014-08-03","iso":"4000","Freq":1},{"date":"2014-08-01","iso":"6400","Freq":1},{"date":"2014-08-02","iso":"6400","Freq":1},{"date":"2014-08-03","iso":"6400","Freq":0}];
   
@@ -1907,11 +1913,11 @@ iso %>>%  ( dPlot(
 ```
 
 
-<div id = 'chart25b813466d5c' class = 'rChart dimple'></div>
+<div id = 'chart25b839a04d66' class = 'rChart dimple'></div>
 <script>
-var chart25b813466d5c = (function() {
+var chart25b839a04d66 = (function() {
   var opts = {
- "dom": "chart25b813466d5c",
+ "dom": "chart25b839a04d66",
 "width":    600,
 "height":    400,
 "xAxis": {
@@ -1932,7 +1938,7 @@ var chart25b813466d5c = (function() {
 "y": "Freq",
 "groups": "date",
 "type": "area",
-"id": "chart25b813466d5c" 
+"id": "chart25b839a04d66" 
 },
     data = [{"date":"2014-08-01","iso":"0","Freq":0},{"date":"2014-08-02","iso":"0","Freq":2},{"date":"2014-08-03","iso":"0","Freq":2},{"date":"2014-08-01","iso":"50","Freq":0},{"date":"2014-08-02","iso":"50","Freq":1},{"date":"2014-08-03","iso":"50","Freq":1},{"date":"2014-08-01","iso":"64","Freq":0},{"date":"2014-08-02","iso":"64","Freq":0},{"date":"2014-08-03","iso":"64","Freq":1},{"date":"2014-08-01","iso":"80","Freq":2},{"date":"2014-08-02","iso":"80","Freq":1},{"date":"2014-08-03","iso":"80","Freq":0},{"date":"2014-08-01","iso":"100","Freq":19},{"date":"2014-08-02","iso":"100","Freq":19},{"date":"2014-08-03","iso":"100","Freq":30},{"date":"2014-08-01","iso":"125","Freq":4},{"date":"2014-08-02","iso":"125","Freq":4},{"date":"2014-08-03","iso":"125","Freq":4},{"date":"2014-08-01","iso":"160","Freq":3},{"date":"2014-08-02","iso":"160","Freq":3},{"date":"2014-08-03","iso":"160","Freq":1},{"date":"2014-08-01","iso":"200","Freq":18},{"date":"2014-08-02","iso":"200","Freq":12},{"date":"2014-08-03","iso":"200","Freq":10},{"date":"2014-08-01","iso":"250","Freq":2},{"date":"2014-08-02","iso":"250","Freq":1},{"date":"2014-08-03","iso":"250","Freq":2},{"date":"2014-08-01","iso":"300","Freq":0},{"date":"2014-08-02","iso":"300","Freq":1},{"date":"2014-08-03","iso":"300","Freq":0},{"date":"2014-08-01","iso":"320","Freq":2},{"date":"2014-08-02","iso":"320","Freq":2},{"date":"2014-08-03","iso":"320","Freq":4},{"date":"2014-08-01","iso":"400","Freq":6},{"date":"2014-08-02","iso":"400","Freq":8},{"date":"2014-08-03","iso":"400","Freq":7},{"date":"2014-08-01","iso":"500","Freq":1},{"date":"2014-08-02","iso":"500","Freq":1},{"date":"2014-08-03","iso":"500","Freq":4},{"date":"2014-08-01","iso":"560","Freq":0},{"date":"2014-08-02","iso":"560","Freq":1},{"date":"2014-08-03","iso":"560","Freq":0},{"date":"2014-08-01","iso":"640","Freq":3},{"date":"2014-08-02","iso":"640","Freq":0},{"date":"2014-08-03","iso":"640","Freq":2},{"date":"2014-08-01","iso":"720","Freq":0},{"date":"2014-08-02","iso":"720","Freq":0},{"date":"2014-08-03","iso":"720","Freq":1},{"date":"2014-08-01","iso":"800","Freq":5},{"date":"2014-08-02","iso":"800","Freq":3},{"date":"2014-08-03","iso":"800","Freq":2},{"date":"2014-08-01","iso":"1000","Freq":1},{"date":"2014-08-02","iso":"1000","Freq":2},{"date":"2014-08-03","iso":"1000","Freq":0},{"date":"2014-08-01","iso":"1250","Freq":1},{"date":"2014-08-02","iso":"1250","Freq":0},{"date":"2014-08-03","iso":"1250","Freq":0},{"date":"2014-08-01","iso":"1600","Freq":2},{"date":"2014-08-02","iso":"1600","Freq":3},{"date":"2014-08-03","iso":"1600","Freq":0},{"date":"2014-08-01","iso":"2500","Freq":0},{"date":"2014-08-02","iso":"2500","Freq":0},{"date":"2014-08-03","iso":"2500","Freq":1},{"date":"2014-08-01","iso":"3200","Freq":0},{"date":"2014-08-02","iso":"3200","Freq":1},{"date":"2014-08-03","iso":"3200","Freq":1},{"date":"2014-08-01","iso":"4000","Freq":0},{"date":"2014-08-02","iso":"4000","Freq":0},{"date":"2014-08-03","iso":"4000","Freq":1},{"date":"2014-08-01","iso":"6400","Freq":1},{"date":"2014-08-02","iso":"6400","Freq":1},{"date":"2014-08-03","iso":"6400","Freq":0}];
   

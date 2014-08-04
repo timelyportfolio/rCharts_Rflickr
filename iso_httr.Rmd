@@ -188,26 +188,28 @@ Now that we have some interesting photos, we can use [flickr.photos.getExif](htt
   #use another lapply
   #to extract the useful information
   iso <- exifData %>>% 
-    ( lapply(
-      1:length(.)
-      ,function(photo){
-        # some photos will not have exif if their owners disable it
-        # and the api call will give us a stat "fail" instead of "ok"
-        ifelse ( 
-          exifData[[photo]]$stat == "ok" 
-          ,exifData[[photo]]$photo$exif[
-            which(exifData[[photo]]$photo$exif[,"label"]=="ISO Speed"),"raw"
-          ] %>>%
-            as.numeric
-          ,NA
-        ) %>>%
-        ( data.frame(
-          interesting[photo,c("date","id")]
-          ,"iso" = .
-        )) %>>%
-        return
-      }
-    ) ) %>>%
+    {
+      lapply(
+        1:length(.)
+        ,function(photo){
+          # some photos will not have exif if their owners disable it
+          # and the api call will give us a stat "fail" instead of "ok"
+          ifelse ( 
+            exifData[[photo]]$stat == "ok" 
+            ,exifData[[photo]]$photo$exif[
+              which(exifData[[photo]]$photo$exif[,"label"]=="ISO Speed"),"raw"
+            ] %>>%
+              as.numeric
+            ,NA
+          ) %>>%
+          ( data.frame(
+            interesting[photo,c("date","id")]
+            ,"iso" = .
+          )) %>>%
+          return
+        }
+      )
+    } %>>%
     ( do.call(rbind,.) ) %>>%
     (with(
       .
@@ -244,17 +246,21 @@ iso %>>% ( dPlot(
 ```
 
 ```{r eval = T}
-iso %>>% ( dPlot(
-  y = "Freq",
-  x = c("iso","date"),
-  groups = "date",
-  data = .,
-  type = "bar",
-  height = 400,
-  width =600
-  ,xAxis = list( orderRule = sort( .$iso ) )
-  ,defaultColors = tol4qualitative  
-) ) %>>% ( .$show("inline") )
+#  using {} instead of () for our enclosure
+#  might be more understandable
+iso %>>% {
+  dPlot(
+    y = "Freq",
+    x = c("iso","date"),
+    groups = "date",
+    data = .,
+    type = "bar",
+    height = 400,
+    width =600
+    ,xAxis = list( orderRule = sort( .$iso ) )
+    ,defaultColors = tol4qualitative
+  )
+} %>>% ( .$show("inline") )
 ```
 
 ```{r eval = T}
