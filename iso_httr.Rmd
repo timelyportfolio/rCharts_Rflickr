@@ -95,7 +95,8 @@ I have always wondered what ISO speeds occur most frequently on Explore.  I neve
 ```{r}
 # analyze EXIF data for interesting list
 library(httr)
-library(pipeR)
+#updated to use version 0.4 devtools::install_github("renkun-ken/pipeR/0.4")
+library(pipeR)  
 library(jsonlite)
 ```
 
@@ -144,18 +145,18 @@ interesting <- lapply(1:daysAnalyze, function(i){
       )
     ) %>>%
       content( as = "text" ) %>>%
-      jsonlite::fromJSON () %:>%
-      .$photos$photo %:>%
-      data.frame(
+      jsonlite::fromJSON () %>>%
+      ( .$photos$photo ) %>>%
+      ( data.frame(
         date = format( Sys.Date() - i, "%Y-%m-%d")
         ,.
         ,stringsAsFactors=F
-      ) %>>%
+      )) %>>%
       return
   }
-) %:>%
+) %>>%
   # combine all the days into a data frame
-  do.call(rbind, .)
+  ( do.call(rbind, .) )
 ```
 
 <h5>Get EXIF for the Interesting</h5>
@@ -186,8 +187,8 @@ Now that we have some interesting photos, we can use [flickr.photos.getExif](htt
   #now that we have a list of EXIF for each photo
   #use another lapply
   #to extract the useful information
-  iso <- exifData %:>% 
-    lapply(
+  iso <- exifData %>>% 
+    ( lapply(
       1:length(.)
       ,function(photo){
         # some photos will not have exif if their owners disable it
@@ -199,19 +200,19 @@ Now that we have some interesting photos, we can use [flickr.photos.getExif](htt
           ] %>>%
             as.numeric
           ,NA
-        ) %:>%
-        data.frame(
+        ) %>>%
+        ( data.frame(
           interesting[photo,c("date","id")]
           ,"iso" = .
-        ) %>>%
+        )) %>>%
         return
       }
-    ) %:>%
-    do.call(rbind,.) %:>%
-    with(
+    ) ) %>>%
+    ( do.call(rbind,.) ) %>>%
+    (with(
       .
       ,table(date,iso)
-    ) %>>%
+    ) ) %>>%
     data.frame( stringsAsFactors = F)
 
 ```
@@ -225,10 +226,10 @@ Now that we have a `data.frame` with ISO speeds, let's use `rCharts` to analyze 
 ```{r eval = T}
 # Thanks to http://tradeblotter.wordpress.com/
 # Qualitative color schemes by Paul Tol
-tol4qualitative=c("#4477AA", "#117733", "#DDCC77", "#CC6677")
+tol4qualitative <- c("#4477AA", "#117733", "#DDCC77", "#CC6677")
 
 require(rCharts)
-iso %:>% dPlot(
+iso %>>% ( dPlot(
   y = "Freq",
   x = "iso",
   groups = "date",
@@ -238,12 +239,12 @@ iso %:>% dPlot(
   width =600
   ,xAxis = list( orderRule = sort( .$iso ) )
   ,defaultColors = tol4qualitative
-) %:>% .$show("inline")
+) ) %>>% ( .$show("inline") )
 
 ```
 
 ```{r eval = T}
-iso %:>% dPlot(
+iso %>>% ( dPlot(
   y = "Freq",
   x = c("iso","date"),
   groups = "date",
@@ -253,11 +254,11 @@ iso %:>% dPlot(
   width =600
   ,xAxis = list( orderRule = sort( .$iso ) )
   ,defaultColors = tol4qualitative  
-) %:>% .$show("inline")
+) ) %>>% ( .$show("inline") )
 ```
 
 ```{r eval = T}
-iso %:>% dPlot(
+iso %>>% ( dPlot(
   y = "Freq",
   x = c("date","iso"),
   groups = "date",
@@ -267,12 +268,12 @@ iso %:>% dPlot(
   width =600
   ,xAxis = list( grouporderRule = sort( .$iso ) )
   ,defaultColors = tol4qualitative 
-)  %:>% .$show("inline")
+) )  %>>% ( .$show("inline") )
 
 ```
 
 ```{r eval = T}
-iso %:>% dPlot(
+iso %>>% ( dPlot(
   y = "Freq",
   x = "iso",
   groups = "date",
@@ -282,11 +283,11 @@ iso %:>% dPlot(
   width =600
   ,xAxis = list( orderRule = sort( .$iso ) )
   ,defaultColors = tol4qualitative   
-) %:>% .$show("inline")
+) )  %>>% ( .$show("inline") )
 ```
 
-```{r}
-iso %:>% dPlot(
+```{r eval = T}
+iso %>>%  ( dPlot(
   y = "Freq",
   x = c("date","iso"),
   groups = "date",
@@ -296,7 +297,7 @@ iso %:>% dPlot(
   width =600
   ,xAxis = list( grouporderRule = sort( .$iso ) )
   ,defaultColors = tol4qualitative 
-) %:>% .$show("inline")
+) )  %>>% ( .$show("inline") )
 ```
 
 As you might already know, I love R, especially with [rCharts](http://rcharts.io) and [slidify](http://slidify.org).
