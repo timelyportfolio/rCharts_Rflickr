@@ -188,33 +188,26 @@ Now that we have some interesting photos, we can use [flickr.photos.getExif](htt
   #use another lapply
   #to extract the useful information
   iso <- exifData %>>% 
-    {
-      lapply(
-        1:length(.)
-        ,function(photo){
-          # some photos will not have exif if their owners disable it
-          # and the api call will give us a stat "fail" instead of "ok"
-          ifelse ( 
-            exifData[[photo]]$stat == "ok" 
-            ,exifData[[photo]]$photo$exif[
-              which(exifData[[photo]]$photo$exif[,"label"]=="ISO Speed"),"raw"
-            ] %>>%
-              as.numeric
-            ,NA
-          ) %>>%
-          ( data.frame(
-            interesting[photo,c("date","id")]
-            ,"iso" = .
-          )) %>>%
-          return
-        }
-      )
-    } %>>%
-    ( do.call(rbind,.) ) %>>%
-    (with(
-      .
-      ,table(date,iso)
-    ) ) %>>%
+    # some photos will not have exif if their owners disable it
+    # and the api call will give us a stat "fail" instead of "ok"
+    list.map(
+      f(p,index) -> {
+        ifelse (
+          p$stat == "ok"
+          , p$photo$exif %>>%
+              (.[which(.[,"label"]=="ISO Speed"),"raw"])  %>>% 
+              as.numeric 
+          , NA
+        ) %>>%
+          {
+            data.frame(
+              interesting[ index, c( "date", "id" )]
+              , "iso" = .
+            )
+          }
+      }
+    ) %>>%
+    list.table( date, iso ) %>>%
     data.frame( stringsAsFactors = F)
 
 ```
